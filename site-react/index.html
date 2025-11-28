@@ -8,8 +8,28 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
 </head>
 <body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="top-bar-container">
+        <div class="contact-info">
+          <span
+            ><i class="fas fa-phone"></i> 0561 49 54 44 - 0660 12 24 55</span
+          >
+          <span><i class="fas fa-envelope"></i> contact@littlecloset.fr</span>
+        </div>
+        <div class="top-bar-right">
+          <span>Livraison gratuite dès 50€</span>
+        </div>
+      </div>
+    </div>
+
+
+
+
     <div id="root"></div>
     
     <script type="text/babel">
@@ -23,7 +43,7 @@
         );
 
         const Search = ({ className }) => (
-            <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className={className} fill="c" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
         );

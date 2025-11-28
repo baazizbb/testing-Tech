@@ -74,7 +74,7 @@ nav {
 
 /* Hero Section */
 .hero {
-  background: /*linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), */ url(images/hero/06.png)
+  background: /*linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), */ url(/images/hero/02.jpg)
     center/contain no-repeat;
   padding: 10rem 5%;
   text-align: center;
@@ -178,13 +178,14 @@ nav {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   max-width: 1400px;
   margin: 0 auto;
 }
 
 .product-card {
+ 
   background: #fff;
   border-radius: 10px;
   border: 2px solid #dbd3d3;

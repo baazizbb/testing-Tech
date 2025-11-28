@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boutique en ligne - FakeStore API</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome pour les icônes -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #476cf2;
+        --secondary-color: #342cc4;
+        --accent-color: #4cc9f0;
+        --light-color: #f8f9fa;
+        --dark-color: #212529;
+      }
+
+      body {
+        background-color: #fefefe;
+        
+        padding-top: 0;
+      }
+
+      /* Navbar */
+
+      .navbar {
+        /* background: linear-gradient(135deg, #f8f9fa, #e2e7ed) !important; */
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: sticky; /* Changer de fixed à sticky */
+        top: 0;
+        z-index: 1020;
+      }
+
+      .navbar-brand {
+        font-weight: bold;
+        color: var(--primary-color) !important;
+      }
+
+      .nav-link {
+        color: #565749 !important;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        color: var(--primary-color) !important;
+      }
+
+      /* Hero Section */
+      .hero-section {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: white;
+        padding: 80px 0;
+      }
+
+      .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .hero-section p {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+      }
+
+      /* Product Cards */
+      .product-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      .product-image {
+        height: 200px;
+        object-fit: contain;
+        padding: 15px;
+      }
+
+      .price-tag {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+
+      .card-body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .product-title {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        height: 48px;
+        margin-bottom: 10px;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 50px;
+      }
+
+      .category-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 10;
+      }
+
+      /* Product Detail Modal */
+      .modal-image-main {
+        width: 100%;
+        height: 400px;
+        object-fit: contain;
+        cursor: zoom-in;
+        transition: transform 0.3s;
+      }
+
+      .modal-image-main.zoomed {
+        transform: scale(1.5);
+        z-index: 1060;
+        position: relative;
+      }
+
+      .image-thumbnails {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+      }
+
+      .thumbnail {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border: 2px solid transparent;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .thumbnail:hover,
+      .thumbnail.active {
+        border-color: var(--primary-color);
+      }
+
+      .modal-rating {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      /* Cart Drawer */
+      .cart-drawer {
+        position: fixed;
+        top: 0;
+        right: -450px;
+        width: 400px;
+        height: 100vh;
+        background: rgb(225, 240, 247);
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        transition: right 0.3s ease;
+        z-index: 1050;
+        padding: 20px;
+        overflow-y: auto;
+      }
+
+      .cart-drawer.open {
+        right: 0;
+      }
+
+      .cart-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        display: none;
+      }
+
+      .cart-overlay.show {
+        display: block;
+      }
+
+      .cart-item {
+        display: flex;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .cart-item-image {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        margin-right: 15px;
+      }
+
+      .cart-item-details {
+        flex-grow: 1;
+      }
+
+      .cart-item-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .cart-item-price {
+        color: var(--primary-color);
+        font-weight: bold;
+      }
+
+      .cart-quantity {
+        width: 70px;
+        display: inline-block;
+      }
+
+      /* Footer */
+      .footer {
+        background-color: var(--dark-color);
+        color: white;
+        padding: 50px 0 20px;
+        margin-top: 50px;
+      }
+
+      .footer h5 {
+        color: var(--accent-color);
+        margin-bottom: 20px;
+      }
+
+      .footer a {
+        color: #ddd;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        color: white;
+      }
+
+      .social-icons a {
+        display: inline-block;
+        margin-right: 15px;
+        font-size: 1.2rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .cart-drawer {
+          width: 100%;
+          right: -100%;
+        }
+
+        .hero-section h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero-section p {
+          font-size: 1rem;
+        }
+
+        .modal-image-main {
+          height: 300px;
+        }
+      }
+
+      /* Image Zoom Overlay */
+      .image-zoom-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1070;
+        cursor: zoom-out;
+      }
+
+      .zoomed-image {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+      }
+      /* Topbar */
+      .topbar {
+        background-color: #000;
+        color: rgb(251, 250, 247);
+        padding: 8px 0;
+        font-size: 0.9rem;
+      }
+      .topbar a {
+        color: hsl(330, 20%, 98%);
+        text-decoration: none;
+        margin-left: 15px;
+      }
+      .logo{
+        height: 40px;
+        width: auto
+      }
+
+      /* Navbar */
+    </style>
+  </head>
+
+  <body>
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <i class="fas fa-phone"></i> 00213 561 49 54 44
+            <span class="mx-2">|</span>
+            <i class="fas fa-map-marker-alt"></i> 123 Rue du Commerce, Paris
+          </div>
+          <div class="col-md-6 text-md-end">
+            <a href="#"><i class="fas fa-truck"></i> Livraison gratuite</a>
+            <a href="#"><i class="fas fa-shield-alt"></i> Paiement sécurisé</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <!-- <i class="fas fa-store me-2"></i>BoutiqueEnLigne -->
+           <img class="logo" src="images/logos/img40.png" alt="">
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#" id="homeLink">Accueil00</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#products">Produits</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#about">À propos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contact">Contact</a>
+            </li>
+          </ul>
+          <div class="d-flex">
+            <button
+              class="btn btn-outline-primary position-relative"
+              id="cartButton"
+            >
+              <i class="fas fa-shopping-cart"></i> Panier
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                id="cartCount"
+                >0</span
+              >
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <!-- <section class="hero-section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <e2>Livraison gratuite pour les commandes de plus de 50€ !</e2>
+
+            <h1>Découvrez nos produits exceptionnels</h1>
+            <h2>bien venue dans notre site</h2>
+            <p>
+              Des articles de qualité à des prix imbattables. Livraison rapide
+              et service client exceptionnel.
+            </p>
+            <a href="#products" class="btn btn-light btn-lg"
+              >Voir les produits <i class="fas fa-arrow-right ms-1"></i
+            ></a>
+          </div>
+          <div class="col-lg-6 text-center">
+            <img
+              src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+              alt="Shopping"
+              class="img-fluid rounded shadow"
+            />
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+      <!-- Products Grid -->
+      <section id="products">
+        <div class="row mb-4">
+          <div class="col-12">
+            
+            <img src="images/logos/img36.png" alt="">
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Rechercher un produit..."
+                    id="searchInput"
+                  />
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    id="searchButton"
+                  >
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-12">
+                <div
+                  class="d-flex flex-wrap justify-content-center gap-2"
+                  id="categoryFilters"
+                >
+                  <button
+                    class="btn btn-outline-primary active"
+                    data-category="all"
+                  >
+                    Tous
+                  </button>
+                  <!-- Les catégories seront ajoutées dynamiquement -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="productsGrid" class="row g-4">
+          <!-- Les produits seront chargés ici -->
+          <div class="loading col-12">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p class="mt-2">Chargement des produits...</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <h5>BoutiqueEnLigne</h5>
+            <p>
+              Votre destination de shopping en ligne préférée. Nous proposons
+              des produits de qualité à des prix compétitifs.
+            </p>
+            <div class="social-icons">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+          </div>
+          <div class="col-md-2 mb-4">
+            <h5>Liens rapides</h5>
+            <ul class="list-unstyled">
+              <li><a href="#">Accueil</a></li>
+              <li><a href="#products">Produits</a></li>
+              <li><a href="#about">À propos</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3 mb-4">
+            <h5>Catégories</h5>
+            <ul class="list-unstyled" id="footerCategories">
+              <!-- Les catégories seront ajoutées dynamiquement -->
+            </ul>
+          </div>
+          <div class="col-md-3 mb-4">
+            <h5>Contact</h5>
+            <ul class="list-unstyled">
+              <li>
+                <i class="fas fa-map-marker-alt me-2"></i> 123 Rue du Commerce,
+                Paris
+              </li>
+              <li><i class="fas fa-phone me-2"></i> +33 1 23 45 67 89</li>
+              <li><i class="fas fa-envelope me-2"></i> contact@boutique.fr</li>
+            </ul>
+          </div>
+        </div>
+        <div class="text-center pt-3 border-top">
+          <p>&copy; 2023 BoutiqueEnLigne. Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Product Detail Modal -->
+    <div
+      class="modal fade"
+      id="productDetailModal"
+      tabindex="-1"
+      aria-labelledby="productDetailModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="productDetailModalLabel">
+              Détails du produit
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" id="modalBody">
+            <!-- Le contenu du modal sera chargé ici -->
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Fermer
+            </button>
+            <button type="button" class="btn btn-primary" id="modalAddToCart">
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Zoom Overlay -->
+    <div class="image-zoom-overlay" id="imageZoomOverlay" style="display: none">
+      <img
+        src=""
+        alt="Zoomed product image"
+        class="zoomed-image"
+        id="zoomedImage"
+      />
+    </div>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-drawer" id="cartDrawer">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4>Votre Panier</h4>
+        <button class="btn-close" id="closeCart"></button>
+      </div>
+
+      <div id="cartItems">
+        <!-- Les articles du panier seront ajoutés ici -->
+        <div class="text-center py-4" id="emptyCartMessage">
+          <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+          <p>Votre panier est vide</p>
+        </div>
+      </div>
+
+      <div class="cart-total mt-4 pt-4 border-top">
+        <div class="d-flex justify-content-between mb-3">
+          <strong>Sous-total:</strong>
+          <span id="cartSubtotal">$0.00</span>
+        </div>
+        <div class="d-flex justify-content-between mb-3">
+          <strong>Livraison:</strong>
+          <span>Gratuite</span>
+        </div>
+        <div class="d-flex justify-content-between mb-4">
+          <strong>Total:</strong>
+          <span id="cartTotal">$0.00</span>
+        </div>
+        <button class="btn btn-primary w-100" id="checkoutButton">
+          Passer la commande
+        </button>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS avec Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Variables globales
+      let allProducts = [];
+      let cart = [];
+      let currentProductId = null;
+
+      // Fonction pour récupérer les produits depuis l'API
+      async function fetchProducts() {
+        try {
+          const response = await fetch("https://fakestoreapi.com/products");
+          const products = await response.json();
+          return products;
+        } catch (error) {
+          console.error("Erreur lors du chargement des produits:", error);
+          return [];
+        }
+      }
+
+      // Fonction pour récupérer les catégories depuis l'API
+      async function fetchCategories() {
+        try {
+          const response = await fetch(
+            "https://fakestoreapi.com/products/categories"
+          );
+          const categories = await response.json();
+          return categories;
+        } catch (error) {
+          console.error("Erreur lors du chargement des catégories:", error);
+          return [];
+        }
+      }
+
+      // Fonction pour générer des images supplémentaires (l'API ne fournit qu'une seule image par produit)
+      function generateAdditionalImages(title, count = 3) {
+        const images = [];
+        for (let i = 0; i < count; i++) {
+          // Utilisation de picsum.photos pour des images aléatoires
+          images.push(
+            `https://picsum.photos/400/300?random=${Math.floor(
+              Math.random() * 1000
+            )}&product=${encodeURIComponent(title)}`
+          );
+        }
+        return images;
+      }
+
+      // Fonction pour afficher les produits
+      function displayProducts(products, searchTerm = "", category = "all") {
+        console.log("Filtrage des produits:", {
+          searchTerm,
+          category,
+          totalProducts: products.length,
+        });
+
+        const productsGrid = document.getElementById("productsGrid");
+
+        // Filtrer les produits selon la recherche et la catégorie
+        const filteredProducts = products.filter((product) => {
+          const matchesSearch =
+            searchTerm === "" ||
+            product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.description
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase());
+
+          const matchesCategory =
+            category === "all" || product.category === category;
+
+          return matchesSearch && matchesCategory;
+        });
+
+        console.log("Produits filtrés:", filteredProducts.length);
+
+        if (filteredProducts.length === 0) {
+          productsGrid.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h3>Aucun produit trouvé</h3>
+                        <p class="text-muted">Essayez de modifier vos critères de recherche.</p>
+                    </div>
+                `;
+          return;
+        }
+
+        let productsHTML = "";
+
+        filteredProducts.forEach((product) => {
+          productsHTML += `
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="card product-card h-100">
+                            <span class="badge bg-primary category-badge">${
+                              product.category
+                            }</span>
+                            <img src="${
+                              product.image
+                            }" class="card-img-top product-image" alt="${
+            product.title
+          }">
+                            <div class="card-body">
+                                <h5 class="card-title product-title">${
+                                  product.title
+                                }</h5>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="price-tag">$${
+                                          product.price
+                                        }</span>
+                                        <div class="rating">
+                                            ${generateStarRating(
+                                              product.rating.rate
+                                            )}
+                                            <small class="text-muted">(${
+                                              product.rating.count
+                                            })</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2 mt-2">
+                                        <button class="btn btn-primary view-detail" data-product-id="${
+                                          product.id
+                                        }">
+                                            <i class="fas fa-eye me-1"></i> Voir détails
+                                        </button>
+                                        <button class="btn btn-outline-primary add-to-cart" data-product-id="${
+                                          product.id
+                                        }">
+                                            <i class="fas fa-shopping-cart me-1"></i> Ajouter au panier
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        });
+
+        productsGrid.innerHTML = productsHTML;
+
+        // Ajouter les événements pour les boutons "Voir détails"
+        document.querySelectorAll(".view-detail").forEach((button) => {
+          button.addEventListener("click", function () {
+            const productId = this.getAttribute("data-product-id");
+            showProductDetail(productId);
+          });
+        });
+
+        // Ajouter les événements pour les boutons "Ajouter au panier"
+        document.querySelectorAll(".add-to-cart").forEach((button) => {
+          button.addEventListener("click", function () {
+            const productId = parseInt(this.getAttribute("data-product-id"));
+            addToCart(productId);
+          });
+        });
+      }
+
+      // Fonction pour afficher les détails d'un produit dans un modal
+      function showProductDetail(productId) {
+        const product = allProducts.find((p) => p.id === parseInt(productId));
+        if (!product) return;
+
+        currentProductId = product.id;
+
+        // Générer des images supplémentaires
+        const additionalImages = generateAdditionalImages(product.title, 3);
+        const allImages = [product.image, ...additionalImages];
+
+        // Créer les miniatures
+        let thumbnailsHTML = "";
+        allImages.forEach((img, index) => {
+          const isActive = index === 0 ? "active" : "";
+          thumbnailsHTML += `
+                    <img src="${img}" class="thumbnail ${isActive}" alt="Thumbnail ${
+            index + 1
+          }" data-index="${index}">
+                `;
+        });
+
+        // Afficher les détails du produit dans le modal
+        document.getElementById("modalBody").innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="product-images">
+                            <img src="${
+                              product.image
+                            }" class="modal-image-main" id="modalMainImage" alt="${
+          product.title
+        }">
+                            <div class="image-thumbnails">
+                                ${thumbnailsHTML}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h2>${product.title}</h2>
+                        <div class="modal-rating">
+                            ${generateStarRating(product.rating.rate)}
+                            <span class="ms-2 text-muted">${
+                              product.rating.count
+                            } avis</span>
+                        </div>
+                        <p class="price-tag display-6">$${product.price}</p>
+                        <p class="mb-4">${product.description}</p>
+                        <div class="d-flex align-items-center mb-4">
+                            <span class="badge bg-primary me-2">${
+                              product.category
+                            }</span>
+                            <span class="text-success"><i class="fas fa-check-circle me-1"></i> En stock</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+        // Afficher le modal
+        const productModal = new bootstrap.Modal(
+          document.getElementById("productDetailModal")
+        );
+        productModal.show();
+
+        // Ajouter les événements pour les miniatures
+        document.querySelectorAll(".thumbnail").forEach((thumbnail) => {
+          thumbnail.addEventListener("click", function () {
+            // Mettre à jour l'image principale
+            const newSrc = this.getAttribute("src");
+            document
+              .getElementById("modalMainImage")
+              .setAttribute("src", newSrc);
+
+            // Mettre à jour l'état actif des miniatures
+            document.querySelectorAll(".thumbnail").forEach((thumb) => {
+              thumb.classList.remove("active");
+            });
+            this.classList.add("active");
+          });
+        });
+
+        // Ajouter l'événement pour le zoom de l'image
+        document
+          .getElementById("modalMainImage")
+          .addEventListener("click", function () {
+            const imageSrc = this.getAttribute("src");
+            document
+              .getElementById("zoomedImage")
+              .setAttribute("src", imageSrc);
+            document.getElementById("imageZoomOverlay").style.display = "flex";
+          });
+      }
+
+      // Fonction pour générer les étoiles de notation
+      function generateStarRating(rating) {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+        let starsHTML = "";
+
+        // Étoiles pleines
+        for (let i = 0; i < fullStars; i++) {
+          starsHTML += '<i class="fas fa-star text-warning"></i>';
+        }
+
+        // Demi-étoile
+        if (halfStar) {
+          starsHTML += '<i class="fas fa-star-half-alt text-warning"></i>';
+        }
+
+        // Étoiles vides
+        for (let i = 0; i < emptyStars; i++) {
+          starsHTML += '<i class="far fa-star text-warning"></i>';
+        }
+
+        return starsHTML;
+      }
+
+      // Fonction pour initialiser les filtres de catégorie
+      function initializeCategoryFilters(categories) {
+        const categoryFilters = document.getElementById("categoryFilters");
+        const footerCategories = document.getElementById("footerCategories");
+
+        // Vider les conteneurs avant d'ajouter les boutons
+        categoryFilters.innerHTML =
+          '<button class="btn btn-outline-primary active" data-category="all">Tous</button>';
+        footerCategories.innerHTML = "";
+
+        categories.forEach((category) => {
+          // Filtres principaux
+          const button = document.createElement("button");
+          button.className = "btn btn-outline-primary";
+          button.textContent =
+            category.charAt(0).toUpperCase() + category.slice(1);
+          button.setAttribute("data-category", category);
+
+          button.addEventListener("click", function () {
+            console.log("Filtre cliqué:", category);
+
+            // Mettre à jour l'état actif des boutons
+            document
+              .querySelectorAll("#categoryFilters .btn")
+              .forEach((btn) => {
+                btn.classList.remove("active");
+              });
+            this.classList.add("active");
+
+            // Filtrer les produits
+            const searchTerm = document.getElementById("searchInput").value;
+            displayProducts(allProducts, searchTerm, category);
+          });
+
+          categoryFilters.appendChild(button);
+
+          // Footer categories
+          const footerItem = document.createElement("li");
+          const footerLink = document.createElement("a");
+          footerLink.href = "#";
+          footerLink.textContent =
+            category.charAt(0).toUpperCase() + category.slice(1);
+          footerLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            console.log("Filtre footer cliqué:", category);
+
+            // Activer le filtre correspondant
+            document
+              .querySelectorAll("#categoryFilters .btn")
+              .forEach((btn) => {
+                btn.classList.remove("active");
+                if (btn.getAttribute("data-category") === category) {
+                  btn.classList.add("active");
+                }
+              });
+
+            // Filtrer les produits
+            displayProducts(allProducts, "", category);
+          });
+          footerItem.appendChild(footerLink);
+          footerCategories.appendChild(footerItem);
+        });
+      }
+
+      // Fonctions pour le panier
+      function addToCart(productId) {
+        const product = allProducts.find((p) => p.id === productId);
+        if (!product) return;
+
+        // Vérifier si le produit est déjà dans le panier
+        const existingItem = cart.find((item) => item.id === productId);
+
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          cart.push({
+            id: product.id,
+            title: product.title,
+            price: product.price,
+            image: product.image,
+            quantity: 1,
+          });
+        }
+
+        updateCartUI();
+        showCartNotification();
+      }
+
+      function removeFromCart(productId) {
+        cart = cart.filter((item) => item.id !== productId);
+        updateCartUI();
+      }
+
+      function updateCartQuantity(productId, newQuantity) {
+        if (newQuantity < 1) {
+          removeFromCart(productId);
+          return;
+        }
+
+        const item = cart.find((item) => item.id === productId);
+        if (item) {
+          item.quantity = newQuantity;
+          updateCartUI();
+        }
+      }
+
+      function updateCartUI() {
+        // Mettre à jour le compteur du panier
+        const totalItems = cart.reduce(
+          (total, item) => total + item.quantity,
+          0
+        );
+        document.getElementById("cartCount").textContent = totalItems;
+
+        // Mettre à jour la liste des articles du panier
+        const cartItems = document.getElementById("cartItems");
+        const emptyCartMessage = document.getElementById("emptyCartMessage");
+
+        if (cart.length === 0) {
+          cartItems.innerHTML = `
+                    <div class="text-center py-4" id="emptyCartMessage">
+                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                        <p>Votre panier est vide</p>
+                    </div>
+                `;
+        } else {
+          let cartHTML = "";
+          let subtotal = 0;
+
+          cart.forEach((item) => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+
+            cartHTML += `
+                        <div class="cart-item">
+                            <img src="${item.image}" alt="${item.title}" class="cart-item-image">
+                            <div class="cart-item-details">
+                                <div class="cart-item-title">${item.title}</div>
+                                <div class="cart-item-price">$${item.price}</div>
+                                <div class="d-flex align-items-center mt-2">
+                                    <button class="btn btn-sm btn-outline-secondary decrease-quantity" data-product-id="${item.id}">-</button>
+                                    <input type="number" class="form-control form-control-sm cart-quantity mx-2 text-center" value="${item.quantity}" min="1" data-product-id="${item.id}">
+                                    <button class="btn btn-sm btn-outline-secondary increase-quantity" data-product-id="${item.id}">+</button>
+                                    <button class="btn btn-sm btn-outline-danger ms-3 remove-item" data-product-id="${item.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+          });
+
+          cartItems.innerHTML = cartHTML;
+
+          // Ajouter les événements pour les boutons du panier
+          document.querySelectorAll(".decrease-quantity").forEach((button) => {
+            button.addEventListener("click", function () {
+              const productId = parseInt(this.getAttribute("data-product-id"));
+              const item = cart.find((item) => item.id === productId);
+              if (item) {
+                updateCartQuantity(productId, item.quantity - 1);
+              }
+            });
+          });
+
+          document.querySelectorAll(".increase-quantity").forEach((button) => {
+            button.addEventListener("click", function () {
+              const productId = parseInt(this.getAttribute("data-product-id"));
+              const item = cart.find((item) => item.id === productId);
+              if (item) {
+                updateCartQuantity(productId, item.quantity + 1);
+              }
+            });
+          });
+
+          document.querySelectorAll(".remove-item").forEach((button) => {
+            button.addEventListener("click", function () {
+              const productId = parseInt(this.getAttribute("data-product-id"));
+              removeFromCart(productId);
+            });
+          });
+
+          document.querySelectorAll(".cart-quantity").forEach((input) => {
+            input.addEventListener("change", function () {
+              const productId = parseInt(this.getAttribute("data-product-id"));
+              const newQuantity = parseInt(this.value);
+              updateCartQuantity(productId, newQuantity);
+            });
+          });
+        }
+
+        // Mettre à jour les totaux
+        document.getElementById(
+          "cartSubtotal"
+        ).textContent = `$${subtotal.toFixed(2)}`;
+        document.getElementById("cartTotal").textContent = `$${subtotal.toFixed(
+          2
+        )}`;
+      }
+
+      function showCartNotification() {
+        // Créer une notification toast temporaire
+        const toast = document.createElement("div");
+        toast.className = "position-fixed bottom-0 end-0 p-3";
+        toast.style.zIndex = "11";
+        toast.innerHTML = `
+                <div class="toast show" role="alert">
+                    <div class="toast-header">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <strong class="me-auto">Panier</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        Produit ajouté au panier avec succès!
+                    </div>
+                </div>
+            `;
+
+        document.body.appendChild(toast);
+
+        // Supprimer la notification après 3 secondes
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 3000);
+      }
+
+      function openCart() {
+        document.getElementById("cartDrawer").classList.add("open");
+        document.getElementById("cartOverlay").classList.add("show");
+      }
+
+      function closeCart() {
+        document.getElementById("cartDrawer").classList.remove("open");
+        document.getElementById("cartOverlay").classList.remove("show");
+      }
+
+      // Initialisation de la page
+      document.addEventListener("DOMContentLoaded", async function () {
+        // Récupérer les produits et les catégories
+        allProducts = await fetchProducts();
+        const categories = await fetchCategories();
+
+        console.log("Produits chargés:", allProducts.length);
+        console.log("Catégories chargées:", categories);
+
+        // Initialiser les filtres de catégorie
+        initializeCategoryFilters(categories);
+
+        // Afficher tous les produits
+        displayProducts(allProducts);
+
+        // Gérer la recherche
+        document
+          .getElementById("searchButton")
+          .addEventListener("click", function () {
+            const searchTerm = document.getElementById("searchInput").value;
+            const activeCategory = document
+              .querySelector("#categoryFilters .btn.active")
+              .getAttribute("data-category");
+            console.log("Recherche:", searchTerm, "Catégorie:", activeCategory);
+            displayProducts(allProducts, searchTerm, activeCategory);
+          });
+
+        document
+          .getElementById("searchInput")
+          .addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+              const searchTerm = this.value;
+              const activeCategory = document
+                .querySelector("#categoryFilters .btn.active")
+                .getAttribute("data-category");
+              console.log(
+                "Recherche (Enter):",
+                searchTerm,
+                "Catégorie:",
+                activeCategory
+              );
+              displayProducts(allProducts, searchTerm, activeCategory);
+            }
+          });
+
+        // Gérer le panier
+        document
+          .getElementById("cartButton")
+          .addEventListener("click", openCart);
+        document
+          .getElementById("closeCart")
+          .addEventListener("click", closeCart);
+        document
+          .getElementById("cartOverlay")
+          .addEventListener("click", closeCart);
+        document
+          .getElementById("checkoutButton")
+          .addEventListener("click", function () {
+            alert("Fonctionnalité de paiement à implémenter!");
+            closeCart();
+          });
+
+        // Gérer l'ajout au panier depuis le modal
+        document
+          .getElementById("modalAddToCart")
+          .addEventListener("click", function () {
+            if (currentProductId) {
+              addToCart(currentProductId);
+              bootstrap.Modal.getInstance(
+                document.getElementById("productDetailModal")
+              ).hide();
+            }
+          });
+
+        // Gérer le zoom d'image
+        document
+          .getElementById("imageZoomOverlay")
+          .addEventListener("click", function () {
+            this.style.display = "none";
+          });
+      });
+    </script>
+  </body>
+</html>
