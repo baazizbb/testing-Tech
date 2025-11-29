@@ -1,0 +1,49 @@
+
+body {
+  padding-top: 56px;
+  /* background-image: url("image/img1.jpg"); */
+
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+}
+
+#paneau-gauche{
+background-color: #33D0DA;
+height: 100vh;
+
+}
+
+#paneau-droite{
+	height: 100vh;
+
+}
+#conteneur-principal{
+   position: relative;
+   z-index: 1;
+   height: 100%;
+   min-width: 1000px;
+   max-width: 1500px;
+   margin: 0 auto;
+
+}
+
+#titre-site {
+font-size: 20px;
+font-weight: bold;
+font-family: 'Lemonada', cursive;
+color: rgb(100, 214, 71);
+}
+
+#titre {
+font-size: 18px;
+font-weight: bold;
+font-family: 'Lemonada', cursive;
+color: rgb(142, 209, 153);
+}
+
+.modification {
+  
+    outline: 3px dashed red;
+    outline-offset: 5px;
+}

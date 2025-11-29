@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owl Carousel Demo</title>
+
+    <!-- CSS Owl Carousel -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background: #f3f5f7;
+            /* padding-top: 200px; */
+        }
+
+        .item {
+            background: #4c6ef5;
+            color: #fff;
+            /* padding: 100px 0; */
+            text-align: center;
+            border-radius: 10px;
+            font-size: 24px;
+           
+        }
+
+        .owl-nav button {
+            background: #bbc82a !important;
+            border-radius: 50% !important;
+            width: 40px;
+            height: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            margin: 5px;
+            
+        }
+        img {
+            border-radius: 20px;
+            height: 300x;
+            width: auto;
+        }
+
+
+
+
+    </style>
+</head>
+<body>
+
+
+
+    <div class="owl-carousel">
+        <div class="item"><img src="images/hero/01.jpg" alt=""></div>
+        <div class="item"><img src="images/hero/02.jpg" alt=""></div>
+        <div class="item"><img src="images/hero/03.jpg" alt=""></div>
+        <div class="item"><img src="images/hero/04.jpg" alt=""></div>
+        <div class="item"><img src="images/hero/05.jpg" alt=""></div>
+        <div class="item"><img src="images/hero/06.png" alt=""></div>
+        <div class="item"><img src="images/hero/07.png" alt=""></div>
+        <div class="item"><img src="images/hero/08.png" alt=""></div>
+        <div class="item"><img src="images/hero/09.png" alt=""></div>
+        <div class="item"><img src="images/hero/10.png" alt=""></div>
+
+
+
+
+
+
+
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- JS Owl Carousel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('.owl-carousel').owlCarousel({
+                center: true,
+                loop:true,
+                margin:15,
+                nav:true,
+                dots:true,
+                autoplay:true,
+                autoplayTimeout:1500,
+                autoHeight:true,
+                autoWidth:true,
+                responsive:{
+                    0:{ items:1 },
+                    600:{ items:2 },
+                    900:{ items:3 }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

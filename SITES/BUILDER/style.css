@@ -1,0 +1,35 @@
+html, body {
+  height: 100vh;
+  width: 100vw;
+}
+
+body {
+  background: #1f1f1f;
+  font-family: "Raleway", sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Abril Fatface", serif;
+}
+
+#paneau-gauche{
+	background-color:#61C8E2;
+	height: 100vh;      /* hauteur du browser 100vh  */
+    
+}
+
+#paneau-droite{
+	
+	height: 100vh;      /* hauteur du browser 100vh  */
+	
+    
+}
+
+#conteneur-principal{
+	  position:relative;
+      z-index: 1;
+      height: 100%;
+      min-width: 1000px;
+      max-width: 1500px;
+      margin: 0 auto;
+}
